@@ -48,9 +48,9 @@ def update_vars(item,new_vars):
     with open("items.json", "w") as f:
         json.dump(vars, f)     #Opens items.json in write mode ("w") and writes the updated vars back to the files
 
-def log_to_file(text,token):
-    with open("log.txt", "a") as log:
-        log.write(str(token) + " : " +  text + " at " + str(datetime.datetime.now()) + "\n")
+def log_to_file(text,token):  #Logs trading-related events
+    with open("log.txt", "a") as log: #Opens log.txt in append mode ("a"), meaning new entries are added to the file without overwriting it
+        log.write(str(token) + " : " +  text + " at " + str(datetime.datetime.now()) + "\n")  #Writes the token and text to the log file, appending the current date and time (datetime.datetime.now())
 
 def get_items():
     # IMPORTING INSTRUMENT TOKENS FROM JSON FILE
@@ -63,14 +63,16 @@ items = get_items()
 while True:
     for item in items:
         # RETRIEVING THE VARS FROM THE DATABASE
-        mycursor.execute("SELECT * FROM items WHERE instrument_token = %s", (item,))
-        myresult = mycursor.fetchall()
+        mycursor.execute("SELECT * FROM items WHERE instrument_token = %s", (item,)) #xecutes a SQL query to fetch data from the items table where the instrument_token matches the current item
+        myresult = mycursor.fetchall() #Retrieves the results of the query as a list of tuples
         if len(myresult) != 0:
              myresult = myresult[0]
              bap = myresult[1]
              baq = myresult[2]
              bbp = myresult[3]
-             bbq = myresult[4]
+             bbq = myresult[4]     #If there are results:
+#Extracts the first result.
+#Assigns bid/ask prices (bap, bbp) and quantities (baq, bbq) to variables
 
         VARS = vars[item]
 
