@@ -1,44 +1,52 @@
-from kiteconnect import KiteConnect
-import datetime
-import json
-import mysql.connector as mc
+from kiteconnect import KiteConnect #kiteconnect:A library to interact with Zerodha's trading platform API,KiteConnect:The main class used for creating an object to interact with the A
+import datetime #A standard Python library for handling date and time. It is used to log timestamps for events in the program.
+import json #A library for working with JSON files. This program uses JSON to manage trading instrument data and variables.
+import mysql.connector as mc #A library to connect and interact with a MySQL database
 
 # CREATING A MYSQL CURSOR TO THE DATABASE VARS
-mydb = mc.connect(
+mydb = mc.connect(                            
     host = "localhost",
     user = "root",
     passwd = "imtheadmin",
     database = "vars"
 )
 mycursor = mydb.cursor()
+#mc.connect: Establishes a connection to the MySQL database.
+#host="localhost": Indicates the database server is running on the local machine.
+#user="root": Specifies the username for the database.
+#passwd="imtheadmin": The password for the database user (not secure; should be managed using environment variables).
+#database="vars": The name of the database to connect to.
+#mydb.cursor: Creates a cursor object to execute SQL queries on the database.
 
 # KITECONNECT OBJECT
-kc = KiteConnect( "klxymrz872j2nng8" , "tdZisdRn8dUKkLSwz13vw17n9JcrZ8uJ" )
+kc = KiteConnect( "klxymrz872j2nng8" , "tdZisdRn8dUKkLSwz13vw17n9JcrZ8uJ" ) #KiteConnect: Creates an object to interact with Zerodha's API.
+#"klxymrz872j2nng8": Placeholder for the api_key required for authentication.
+#"tdZisdRn8dUKkLSwz13vw17n9JcrZ8uJ": Placeholder for the api_secret to authenticate API requests securely.
 
-def get_items():
+def get_items(): #Defines a function named get_items that retrieves trading instruments
     # IMPORTING INSTRUMENT TOKENS FROM JSON FILE
-    with open("items.json", "r") as f:
-        items = json.load(f)
-        return [int(x) for x in items.keys()]
+    with open("items.json", "r") as f: #Opens the file items.json in read mode ("r") and assigns it to the variable f.
+        items = json.load(f)            # Parses the JSON file and loads its contents into the items dictionary.
+        return [int(x) for x in items.keys()]  #Converts the keys (assumed to be strings) into integers and returns them as a list.
 
 items = get_items()
 
-def get_vars():
+def get_vars():                           #Defines a function named get_vars to load trading variables.
     # IMPORTING INSTRUMENT TOKENS FROM JSON FILE
     with open("items.json", "r") as f:
-        vars = json.load(f)
-    new_vars = {}
+        vars = json.load(f)                      #Opens items.json and loads its content into the dictionary vars
+
+    new_vars = {}   #Initializes an empty dictionary, new_vars, to store processed variables
     for item in items:
-        new_vars[item] = vars[str(item)]
-    return new_vars
+        new_vars[item] = vars[str(item)]  #Extracts the data for each item (key) from vars and adds it to new_vars
+    return new_vars  #Returns the processed variables (new_vars)
     
 
-vars = get_vars()
-
+vars = get_vars() 
 def update_vars(item,new_vars):
     vars[item] = new_vars
     with open("items.json", "w") as f:
-        json.dump(vars, f)
+        json.dump(vars, f)     #Opens items.json in write mode ("w") and writes the updated vars back to the files
 
 def log_to_file(text,token):
     with open("log.txt", "a") as log:
